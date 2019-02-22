@@ -4,21 +4,37 @@
       <!-- We are telling angular: "hey, use my form group with the [formGroup]
         directive." -->
       <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            formControlName="username"
-            class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="email">email</label>
-          <input
-            type="text"
-            id="email"
-            formControlName="email"
-            class="form-control">
+        <div formGroupName="userData">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  formControlName="username"
+                  class="form-control">
+                  <!-- in the signupForm.get we can specify the control name
+                  or control path. -->
+                  <span class="help-block" 
+                    *ngIf="hasError('userData.username', 'nameIsForbidden') && signupForm.get('userData.username').touched">
+                    Please enter a valid username
+                  </span>
+                  <span class="help-block" 
+                    *ngIf="hasError('userData.username', 'required') && signupForm.get('userData.username').touched">
+                    Username required
+                  </span>
+              </div>
+              <div class="form-group">
+                <label for="email">email</label>
+                <input
+                  type="text"
+                  id="email"
+                  formControlName="email"
+                  class="form-control">
+                  <span class="help-block"
+                    *ngIf="!signupForm.get('userData.email').valid && signupForm.get('userData.email').touched">
+                    Please enter a valid email
+                  </span>
+              </div>
         </div>
         <div class="radio" *ngFor="let gender of genders">
           <label>
@@ -28,7 +44,24 @@
               [value]="gender">{{ gender }}
           </label>
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <div formArrayName="hobbies">
+          <h4>Your hobbies</h4>
+          <button class="btn btn-default" type="button" (click)="addHobby()">Add hobby</button>
+          <br>
+          <br>
+          <div class="form-group"
+            *ngFor="let hobbyControl of signupForm.get('hobbies').controls; let i = index">
+            <input type="text" class="form-control" [formControlName]="i">
+          </div>
+        </div>
+        <span class="help-block"
+          *ngIf="!signupForm.valid && signupForm.touched">
+          Please enter valid data
+        </span>
+        <br>
+        <button class="btn btn-primary" type="submit">
+          Submit
+        </button>
       </form>
     </div>
   </div>
